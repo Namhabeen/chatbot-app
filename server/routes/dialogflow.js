@@ -14,13 +14,35 @@ const languageCode = config.dialogFlowSessionLanguageCode;
 const sessionClient = new dialogflow.SessionsClient();
 const sessionPath = sessionClient.sessionPath(projectId, sessionId);
 
-//텍스트 쿼리
+//텍스트 쿼리 라우트
 router.post("/textQuery", async (req, res) => {
   const request = {
     session: sessionPath,
     queryInput: {
       text: {
         text: req.body.text,
+        languageCode: languageCode,
+      },
+    },
+  };
+
+  //리퀘스트, 로그 전송
+  const responses = await sessionClient.detectIntent(request);
+  console.log("Detected intent");
+  const result = responses[0].queryResult;
+  console.log(`  Query: ${result.queryText}`);
+  console.log(`  Response: ${result.fulfillmentText}`);
+
+  res.send(result);
+});
+
+//이벤트 쿼리 라우트
+router.post("/eventQuery", async (req, res) => {
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      event: {
+        name: req.body.event,
         languageCode: languageCode,
       },
     },
