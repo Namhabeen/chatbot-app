@@ -10,30 +10,23 @@ const projectId = config.googleProjectID;
 const sessionId = config.dialogFlowSessionID;
 const languageCode = config.dialogFlowSessionLanguageCode;
 
-// Create a new session
+//세션 만들기
 const sessionClient = new dialogflow.SessionsClient();
 const sessionPath = sessionClient.sessionPath(projectId, sessionId);
 
-// We will make two routes
-
-// Text Query Route
-
+//텍스트 쿼리
 router.post("/textQuery", async (req, res) => {
-  //We need to send some information that comes from the client to Dialogflow API
-  // The text query request.
   const request = {
     session: sessionPath,
     queryInput: {
       text: {
-        // The query to send to the dialogflow agent
         text: req.body.text,
-        // The language used by the client (en-US)
         languageCode: languageCode,
       },
     },
   };
 
-  // Send request and log result
+  //리퀘스트, 로그 전송
   const responses = await sessionClient.detectIntent(request);
   console.log("Detected intent");
   const result = responses[0].queryResult;
